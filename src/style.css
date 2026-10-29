@@ -1,0 +1,66 @@
+body {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+  background: #fff;
+  color: #000;
+  font: 14px/1.5 system-ui, "Malgun Gothic", sans-serif;
+}
+
+h1 { font-size: 20px; }
+h2 { margin-top: 32px; font-size: 16px; }
+h2 small { font-weight: normal; color: #666; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+output { font-variant-numeric: tabular-nums; }
+
+.images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+figure { margin: 0; }
+figcaption { color: #666; font-size: 12px; }
+.images canvas { display: block; width: 100%; height: auto; border: 1px solid #ddd; }
+
+dl { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+dt { color: #666; }
+dd { margin: 0; }
+
+.stage { display: flex; justify-content: center; }
+#mainCanvas { border: 1px solid #ddd; max-width: 100%; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 152px);
+  gap: 6px;
+}
+
+.thumb {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  background: none;
+  font: inherit;
+}
+
+button.thumb { cursor: pointer; }
+.thumb.current { border-color: #000; }
+.thumb canvas { display: block; }
+
+.thumb span {
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  color: #666;
+  font-size: 11px;
+}

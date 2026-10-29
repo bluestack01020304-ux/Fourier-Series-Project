@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>푸리에 급수 드로잉</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>푸리에 급수 이미지 드로잉</h1>
+
+  <h2>1. 사진 · 윤곽선</h2>
+  <div class="controls">
+    <input type="file" id="file" accept="image/*">
+    <button type="button" id="sample">예제 이미지</button>
+    <label>에지 임계값 <input type="range" id="threshold" min="3" max="60" value="20"> <output id="thresholdOut">20%</output></label>
+    <label>샘플 점 수 <input type="range" id="points" min="200" max="4000" step="100" value="1500"> <output id="pointsOut">1500</output></label>
+  </div>
+  <div class="images">
+    <figure><canvas id="srcCanvas"></canvas><figcaption>원본</figcaption></figure>
+    <figure><canvas id="edgeCanvas"></canvas><figcaption>에지</figcaption></figure>
+    <figure><canvas id="pathCanvas"></canvas><figcaption>경로</figcaption></figure>
+  </div>
+
+  <h2>2. 학습</h2>
+  <progress id="progress" max="1" value="0"></progress> <span id="progressText"></span>
+  <dl id="stats"></dl>
+
+  <h2>3. 재생</h2>
+  <div class="controls">
+    <button type="button" id="play">일시정지</button>
+    <label>프레임 <input type="range" id="frame" min="0" max="119" value="0"> <output id="frameOut"></output></label>
+    <label>속도 <input type="range" id="fps" min="5" max="120" value="30"> <output id="fpsOut"></output></label>
+    <label>항 개수 <input type="range" id="terms" min="1" max="1500" value="1500"> <output id="termsOut"></output></label>
+    <label>총 프레임
+      <select id="frameCount">
+        <option>60</option>
+        <option selected>120</option>
+        <option>240</option>
+        <option>480</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="showCircles" checked> 원</label>
+    <label><input type="checkbox" id="hideJumps" checked> 점프 선 숨기기</label>
+    <button type="button" id="savePng">PNG 저장</button>
+  </div>
+  <div class="stage"><canvas id="mainCanvas"></canvas></div>
+
+  <h2>4. 전체 프레임 <small id="framesInfo"></small></h2>
+  <div class="controls"><button type="button" id="saveSheet">시트 PNG 저장</button></div>
+  <div class="grid" id="frameGrid"></div>
+
+  <h2>5. 항 개수별 근사</h2>
+  <div class="grid" id="convergeGrid"></div>
+
+  <script src="js/edge.js"></script>
+  <script src="js/fourier.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
