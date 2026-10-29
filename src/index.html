@@ -7,51 +7,88 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>푸리에 급수 이미지 드로잉</h1>
+  <header>
+    <h1>푸리에 급수 이미지 드로잉</h1>
+    <p>사진의 윤곽선을 복소 푸리에 급수 <code>z(t) = Σ c<sub>k</sub> e<sup>i2πkt</sup></code> 로 학습하고,
+      회전하는 원(에피사이클)이 그림을 그려 나가는 모든 프레임을 보여줍니다.</p>
+  </header>
 
-  <h2>1. 사진 · 윤곽선</h2>
-  <div class="controls">
-    <input type="file" id="file" accept="image/*">
-    <button type="button" id="sample">예제 이미지</button>
-    <label>에지 임계값 <input type="range" id="threshold" min="3" max="60" value="20"> <output id="thresholdOut">20%</output></label>
-    <label>샘플 점 수 <input type="range" id="points" min="200" max="4000" step="100" value="1500"> <output id="pointsOut">1500</output></label>
-  </div>
-  <div class="images">
-    <figure><canvas id="srcCanvas"></canvas><figcaption>원본</figcaption></figure>
-    <figure><canvas id="edgeCanvas"></canvas><figcaption>에지</figcaption></figure>
-    <figure><canvas id="pathCanvas"></canvas><figcaption>경로</figcaption></figure>
-  </div>
+  <main>
+    <section class="panel">
+      <h2><span class="num">1</span> 사진 선택 · 윤곽선 추출</h2>
+      <div class="controls">
+        <label class="btn primary"><input type="file" id="file" accept="image/*" hidden>사진 불러오기</label>
+        <button type="button" class="btn" id="sample">예제 이미지</button>
+        <label class="range">에지 임계값
+          <input type="range" id="threshold" min="3" max="60" value="20">
+          <output id="thresholdOut">20%</output>
+        </label>
+        <label class="range">샘플 점 수
+          <input type="range" id="points" min="200" max="4000" step="100" value="1500">
+          <output id="pointsOut">1500</output>
+        </label>
+      </div>
+      <div class="images">
+        <figure><canvas id="srcCanvas"></canvas><figcaption>원본</figcaption></figure>
+        <figure><canvas id="edgeCanvas"></canvas><figcaption>에지 검출 (Canny)</figcaption></figure>
+        <figure><canvas id="pathCanvas"></canvas><figcaption>한 붓 경로 (색 = 순서, 점선 = 점프)</figcaption></figure>
+      </div>
+      <p class="hint">사진을 화면에 끌어다 놓거나 붙여넣기(Ctrl+V)해도 됩니다.</p>
+    </section>
 
-  <h2>2. 학습</h2>
-  <progress id="progress" max="1" value="0"></progress> <span id="progressText"></span>
-  <dl id="stats"></dl>
+    <section class="panel">
+      <h2><span class="num">2</span> 학습 · 푸리에 계수 계산</h2>
+      <div class="progress"><div id="progressBar"></div></div>
+      <p class="progress-text" id="progressText"></p>
+      <dl class="stats" id="stats"></dl>
+    </section>
 
-  <h2>3. 재생</h2>
-  <div class="controls">
-    <button type="button" id="play">일시정지</button>
-    <label>프레임 <input type="range" id="frame" min="0" max="119" value="0"> <output id="frameOut"></output></label>
-    <label>속도 <input type="range" id="fps" min="5" max="120" value="30"> <output id="fpsOut"></output></label>
-    <label>항 개수 <input type="range" id="terms" min="1" max="1500" value="1500"> <output id="termsOut"></output></label>
-    <label>총 프레임
-      <select id="frameCount">
-        <option>60</option>
-        <option selected>120</option>
-        <option>240</option>
-        <option>480</option>
-      </select>
-    </label>
-    <label><input type="checkbox" id="showCircles" checked> 원</label>
-    <label><input type="checkbox" id="hideJumps" checked> 점프 선 숨기기</label>
-    <button type="button" id="savePng">PNG 저장</button>
-  </div>
-  <div class="stage"><canvas id="mainCanvas"></canvas></div>
+    <section class="panel">
+      <h2><span class="num">3</span> 프레임 재생</h2>
+      <div class="controls">
+        <button type="button" class="btn primary" id="play">일시정지</button>
+        <label class="range wide">프레임
+          <input type="range" id="frame" min="0" max="119" value="0">
+          <output id="frameOut"></output>
+        </label>
+        <label class="range">속도
+          <input type="range" id="fps" min="5" max="120" value="30">
+          <output id="fpsOut"></output>
+        </label>
+        <label class="range wide">사용할 원(항) 개수
+          <input type="range" id="terms" min="1" max="1500" value="1500">
+          <output id="termsOut"></output>
+        </label>
+        <label class="select">총 프레임
+          <select id="frameCount">
+            <option>60</option>
+            <option selected>120</option>
+            <option>240</option>
+            <option>480</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="showCircles" checked> 원 표시</label>
+        <label class="check"><input type="checkbox" id="hideJumps" checked> 점프 선 숨기기</label>
+        <button type="button" class="btn" id="savePng">현재 프레임 PNG</button>
+      </div>
+      <div class="stage"><canvas id="mainCanvas"></canvas></div>
+    </section>
 
-  <h2>4. 전체 프레임 <small id="framesInfo"></small></h2>
-  <div class="controls"><button type="button" id="saveSheet">시트 PNG 저장</button></div>
-  <div class="grid" id="frameGrid"></div>
+    <section class="panel">
+      <h2><span class="num">4</span> 전체 프레임 <small id="framesInfo"></small></h2>
+      <div class="controls">
+        <button type="button" class="btn" id="saveSheet">전체 프레임 시트 PNG 저장</button>
+        <span class="hint">프레임을 누르면 위 플레이어가 그 프레임으로 이동합니다.</span>
+      </div>
+      <div class="grid" id="frameGrid"></div>
+    </section>
 
-  <h2>5. 항 개수별 근사</h2>
-  <div class="grid" id="convergeGrid"></div>
+    <section class="panel">
+      <h2><span class="num">5</span> 항 개수에 따른 근사 (수렴 과정)</h2>
+      <p class="hint">진폭이 큰 순서대로 항을 더할수록 원래 윤곽선에 가까워집니다.</p>
+      <div class="grid" id="convergeGrid"></div>
+    </section>
+  </main>
 
   <script src="js/edge.js"></script>
   <script src="js/fourier.js"></script>

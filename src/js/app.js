@@ -10,12 +10,12 @@
   const CONVERGE_TERMS = [1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 2000];
 
   const COLORS = {
-    bg: '#fff',
-    circle: 'rgba(0, 0, 0, 0.15)',
-    radius: 'rgba(0, 0, 0, 0.4)',
-    path: '#000',
-    tip: '#e00',
-    label: '#666',
+    bg: '#0f1222',
+    circle: 'rgba(255, 255, 255, 0.16)',
+    radius: 'rgba(255, 255, 255, 0.45)',
+    path: '#ffc93c',
+    tip: '#ff5c7a',
+    label: 'rgba(255, 255, 255, 0.75)',
   };
 
   const state = {
@@ -42,7 +42,7 @@
     srcCanvas: $('srcCanvas'),
     edgeCanvas: $('edgeCanvas'),
     pathCanvas: $('pathCanvas'),
-    progress: $('progress'),
+    progressBar: $('progressBar'),
     progressText: $('progressText'),
     stats: $('stats'),
     play: $('play'),
@@ -219,7 +219,7 @@
   }
 
   function setProgress(p) {
-    ui.progress.value = p;
+    ui.progressBar.style.width = `${(p * 100).toFixed(1)}%`;
     ui.progressText.textContent = p < 1 ? `학습 중… ${(p * 100).toFixed(0)}%` : '학습 완료';
   }
 
@@ -348,7 +348,7 @@
     }
 
     if (opts.label) {
-      g.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      g.fillStyle = 'rgba(0, 0, 0, 0.45)';
       g.font = `${Math.round(size / 13)}px system-ui, sans-serif`;
       const tw = g.measureText(opts.label).width;
       const pad = size / 40;
